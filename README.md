@@ -7,7 +7,7 @@ leveraging Deep Learning, Computer Vision, and Remote Sensing technologies to en
 
 ## Demo
 ![](https://github.com/gvsam7/TreeCrownInstSeg/blob/main/Images/reveal_slider_animation.gif)
-![Comparison](https://github.com/gvsam7/TreeCrownInstSeg/blob/main/Images/DilLogGabMPResUNet_comparison.html)
+
 
 ## Google Colab
 - Detectree2 Demo[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1VvQbov0EY7CkzqMnR84QiY-bySSx9_wN#scrollTo=k08FlmFjYil-)
