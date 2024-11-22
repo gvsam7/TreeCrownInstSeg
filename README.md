@@ -9,7 +9,7 @@ leveraging Deep Learning, Computer Vision, and Remote Sensing technologies to en
 ![](https://github.com/gvsam7/TreeCrownInstSeg/blob/main/Images/reveal_slider_animation.gif)
 
 ## Google Colab
-- Detectree2 Demo[![Open In Colab](https://colab.research.google.com/drive/1VvQbov0EY7CkzqMnR84QiY-bySSx9_wN#scrollTo=k08FlmFjYil-)]
+- Detectree2 Demo[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1VvQbov0EY7CkzqMnR84QiY-bySSx9_wN#scrollTo=k08FlmFjYil-)]
 
 ## Papers
 - [Improved Regularization of Convolutional Neural Networks with Cutout](https://arxiv.org/abs/1708.04552)
