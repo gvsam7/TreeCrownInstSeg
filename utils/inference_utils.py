@@ -2,7 +2,8 @@ import os
 import cv2
 from detectron2.engine import DefaultPredictor
 from detectron2.utils.visualizer import Visualizer
-from skimage.measure import label, regionprops
+# from skimage.measure import label, regionprops
+from detectron2.config import get_cfg 
 import csv
 
 
