@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 
 def register_datasets():
     from detectron2.data.datasets import register_coco_instances
-    register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json")
-    register_coco_instances("my_dataset_val", {}, "Data/bal/annotations.json")
-    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json")
+    register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json", "Data/train")
+    register_coco_instances("my_dataset_val", {}, "Data/bal/annotations.json", "Data/val")
+    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
 
 
 def visualize_samples(dataset_name="my_dataset_train"):
