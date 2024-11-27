@@ -16,7 +16,6 @@ def initialise_predictor(config_file):
 
     # Save the config to a YAML file
     config_yaml_path = "Detectron2/config.yaml"
-    print(f"path: ", config_yaml_path)
     with open(config_yaml_path, 'w') as file:
         yaml.dump(cfg, file)
 

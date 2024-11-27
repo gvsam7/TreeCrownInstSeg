@@ -8,9 +8,17 @@ import os
 from utils.data_utils import register_datasets, visualize_samples
 from utils.train_utils import train_model
 from utils.inference_utils import initialise_predictor, run_inference, export_results_to_csv
+from utils.hyperparameters import arguments
+import torch
 
 
 def main():
+    args = arguments()
+
+    # Set device
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Running on the: {device}")
+
     # Step 1: Setup environment and datasets
     register_datasets()
     # visualize_samples()
@@ -19,14 +27,14 @@ def main():
     config_file = "Detectron2/config.yaml"
     train_model(
         output_dir="outputs/results",
-        num_classes=11,
+        num_classes=args.num_classes,
         train_dataset="my_dataset_train",
         test_dataset="my_dataset_test",
-        num_workers=2,
-        ims_per_batch=2,
-        max_iter=2,  # 1000,
-        batch_size=256,
-        base_lr=0.00025,
+        num_workers=args.num_workers,
+        ims_per_batch=args.ims_per_batch,
+        max_iter=args.max_iter,  # 1000,
+        batch_size=args.batch_size,
+        base_lr=args.base_lr,
     )
 
     # Step 3: Initialise the predictor
