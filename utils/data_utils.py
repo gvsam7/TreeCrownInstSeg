@@ -12,7 +12,7 @@ def register_datasets():
     register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
 
 
-def visualize_samples(dataset_name="my_dataset_train"):
+def visualize_samples(dataset_name="my_dataset_test"):
     metadata = MetadataCatalog.get(dataset_name)
     dataset_dicts = DatasetCatalog.get(dataset_name)
     for d in random.sample(dataset_dicts, 2):

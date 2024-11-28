@@ -5,7 +5,8 @@ from detectron2 import model_zoo
 from detectron2.data import DatasetCatalog
 
 
-def train_model(output_dir, num_classes, train_dataset, test_dataset, num_workers, ims_per_batch, max_iter, batch_size, base_lr):
+def train_model(output_dir, num_classes, train_dataset, test_dataset, num_workers, ims_per_batch, max_iter, batch_size,
+                base_lr, threshold):
     """
     Train a Detectron2 model with a given configuration.
 
@@ -47,6 +48,9 @@ def train_model(output_dir, num_classes, train_dataset, test_dataset, num_worker
         cfg.SOLVER.STEPS = []
         cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = batch_size
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
+        cfg.MODEL.MASK_ON = True
+        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold  # set a custom testing threshold
+        cfg.MODEL.ROI_MASK_HEAD.NAME = "ROI_MASK_HEAD"  # Ensure mask head is included
 
         # Create the output directory if it doesn't exist
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)

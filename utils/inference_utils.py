@@ -5,6 +5,7 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.config import get_cfg
 import csv
 import yaml
+from skimage.measure import regionprops, label
 
 
 def initialise_predictor(config_file):
@@ -34,6 +35,9 @@ def run_inference(image_dir, output_dir, predictor, metadata):
         new_im = cv2.imread(image_path)
         outputs = predictor(new_im)
 
+        # Debugging to ensure metadata is correct
+        print(f"Metadata type: {type(metadata)}")  # Debug line
+
         # Visualise results
         v = Visualizer(new_im[:, :, ::-1], metadata=metadata)
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
@@ -43,29 +47,53 @@ def run_inference(image_dir, output_dir, predictor, metadata):
     print("Inference completed and visualized results saved.")
 
 
-def export_results_to_csv(image_dir, output_csv_path, predictor):
+def export_results_to_csv(image_dir, output_csv_path, predictor, metadata):
     """Extract object-level information and save to a CSV file."""
     with open(output_csv_path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
+        # Write the header row in the CSV file
         csvwriter.writerow(["File Name", "Category_ID", "Tree_ID", "Area", "Segmentation", "BoundingBox"])
 
         for image_filename in os.listdir(image_dir):
             if not image_filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
-                continue  # Skip non-image files
+                continue
 
+            print(f"Processing image: {image_filename}")
             image_path = os.path.join(image_dir, image_filename)
             new_img = cv2.imread(image_path)
+
             outputs = predictor(new_img)
-            instances = outputs["instances"].to("cpu")
+            print(f"Outputs for {image_filename}: {outputs}")  # Debug outputs
 
-            for i in range(len(instances)):
-                category_id = instances.pred_classes[i].item()
-                bbox = instances.pred_boxes[i].tensor.numpy().tolist()
-                area = instances.sizes[i].item()
+            if len(outputs["instances"]) == 0:
+                print(f"No objects detected in {image_filename}.")
+                continue
 
-                # Placeholder for Tree_ID extraction logic
-                tree_id = "Unknown"
+            masks = outputs["instances"].pred_masks.to("cpu").numpy().astype(bool)
+            class_labels = outputs["instances"].pred_classes.to("cpu").numpy()
 
-                csvwriter.writerow([image_filename, category_id, tree_id, area, bbox])
+            for instance_idx, instance_mask in enumerate(masks):
+                labeled_mask = label(instance_mask)
+                props = regionprops(labeled_mask)
+
+                for prop in props:
+                    area = prop.area
+                    centroid_str = f"({prop.centroid[0]:.2f}, {prop.centroid[1]:.2f})"
+                    bounding_box_str = f"({prop.bbox[0]}, {prop.bbox[1]}, {prop.bbox[2]}, {prop.bbox[3]})"
+
+                    if instance_idx < len(class_labels):
+                        class_label = class_labels[instance_idx]
+                        class_name = metadata.thing_classes[class_label]
+                    else:
+                        class_name = "Unknown"
+
+                    print(f"Detected Object {instance_idx + 1} in {image_filename}:")
+                    print(f"  - Class Name: {class_name}")
+                    print(f"  - Area: {area}")
+                    print(f"  - Centroid: {centroid_str}")
+                    print(f"  - Bounding Box: {bounding_box_str}")
+
+                    csvwriter.writerow(
+                        [image_filename, class_name, instance_idx + 1, area, centroid_str, bounding_box_str])
 
     print("Results exported to CSV.")

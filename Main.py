@@ -10,6 +10,7 @@ from utils.train_utils import train_model
 from utils.inference_utils import initialise_predictor, run_inference, export_results_to_csv
 from utils.hyperparameters import arguments
 import torch
+from detectron2.data import MetadataCatalog
 
 
 def main():
@@ -35,6 +36,7 @@ def main():
         max_iter=args.max_iter,  # 1000,
         batch_size=args.batch_size,
         base_lr=args.base_lr,
+        threshold=args.threshold,
     )
 
     # Step 3: Initialise the predictor
@@ -43,12 +45,16 @@ def main():
     # Step 4: Run inference on the test set
     test_images_dir = "Data/test"
     output_dir = "outputs/results"
-    metadata = cfg.DATASETS.TRAIN[0]
+    # metadata = cfg.DATASETS.TRAIN[0]
+    metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
+
+    # Debugging to ensure metadata is correct
+    print(f"Main Metadata type: {type(metadata)}")  # Debug line
     run_inference(test_images_dir, output_dir, predictor, metadata)
 
     # Step 5: Export results to a CSV
     output_csv_path = os.path.join(output_dir, "output_objects.csv")
-    export_results_to_csv(test_images_dir, output_csv_path, predictor)
+    export_results_to_csv(test_images_dir, output_csv_path, predictor, metadata)
 
 
 if __name__ == "__main__":
