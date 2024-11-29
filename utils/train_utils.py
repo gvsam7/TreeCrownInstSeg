@@ -5,7 +5,7 @@ from detectron2 import model_zoo
 from detectron2.data import DatasetCatalog
 
 
-def train_model(output_dir, num_classes, train_dataset, test_dataset, num_workers, ims_per_batch, max_iter, batch_size,
+def train_model(device, output_dir, num_classes, train_dataset, test_dataset, num_workers, ims_per_batch, max_iter, batch_size,
                 base_lr, threshold):
     """
     Train a Detectron2 model with a given configuration.
@@ -35,7 +35,7 @@ def train_model(output_dir, num_classes, train_dataset, test_dataset, num_worker
     # Configure Detectron2 model
     try:
         cfg = get_cfg()
-        cfg.MODEL.DEVICE = "cpu"
+        cfg.MODEL.DEVICE = device  # "cpu"
         cfg.OUTPUT_DIR = output_dir
         cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
         cfg.DATASETS.TRAIN = (train_dataset,)
@@ -50,7 +50,7 @@ def train_model(output_dir, num_classes, train_dataset, test_dataset, num_worker
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
         cfg.MODEL.MASK_ON = True
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold  # set a custom testing threshold
-        cfg.MODEL.ROI_MASK_HEAD.NAME = "ROI_MASK_HEAD"  # Ensure mask head is included
+        # cfg.MODEL.ROI_MASK_HEAD.NAME = "ROI_MASK_HEAD"  # Ensure mask head is included
 
         # Create the output directory if it doesn't exist
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
