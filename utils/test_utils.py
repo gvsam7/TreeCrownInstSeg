@@ -2,6 +2,7 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 import os
 
+
 def evaluate_model(cfg, predictor, test_dataset, output_dir):
     """
     Evaluate the model using COCO metrics.

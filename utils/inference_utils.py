@@ -9,7 +9,7 @@ from skimage.measure import regionprops, label
 
 
 def initialise_predictor(config_file):
-    """Initialise the Detectron2 predictor with the given config file."""
+    # Initialise the Detectron2 predictor with the given config file.
     cfg = get_cfg()
     cfg.merge_from_file(config_file)
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
@@ -25,7 +25,7 @@ def initialise_predictor(config_file):
 
 
 def run_inference(image_dir, output_dir, predictor, metadata):
-    """Perform inference and save visualised results."""
+    # Perform inference and save visualised results.
     os.makedirs(output_dir, exist_ok=True)
     for image_filename in os.listdir(image_dir):
         if not image_filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
@@ -48,7 +48,7 @@ def run_inference(image_dir, output_dir, predictor, metadata):
 
 
 def export_results_to_csv(image_dir, output_csv_path, predictor, metadata):
-    """Extract object-level information and save to a CSV file."""
+    # Extract object-level information and save to a CSV file.
     with open(output_csv_path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         # Write the header row in the CSV file

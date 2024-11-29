@@ -1,11 +1,13 @@
 """"
 Author: Georgios Voulgaris
 Date: 22/11/2024
-Description: This python script uses Detectron2 to train a Mask R-CNN to segment individual tree crowns.
+Description: This repository uses Detectron2 to train a Mask R-CNN for segmenting individual tree crowns. It serves as a
+             baseline that will enable for further experimentation to explore data fusion techniques for the task of
+             individual tree instance segmentation.
 """
 
 import os
-from utils.data_utils import register_datasets, visualize_samples
+from utils.data_utils import register_datasets, visualise_samples
 from utils.train_utils import train_model
 from utils.test_utils import evaluate_model
 from utils.inference_utils import initialise_predictor, run_inference, export_results_to_csv
@@ -19,7 +21,7 @@ import wandb
 def main():
     args = arguments()
 
-    # Initialize wandb with more detailed configuration
+    # Initialise wandb with more detailed configuration
     wandb.init(
         project="InstSeg",
         config={
@@ -40,7 +42,7 @@ def main():
 
     # Step 1: Setup environment and datasets
     register_datasets()
-    # visualize_samples()
+    # visualise_samples()
 
     # Step 2: Train the model
     config_file = "Detectron2/config.yaml"
@@ -62,11 +64,11 @@ def main():
     cfg, predictor = initialise_predictor(config_file)
 
     # Step 4: Evaluate the model
-    test_dataset = "my_dataset_test"  # Can be changed to any dataset name
-    output_dir = "outputs/results"  # Define your output directory
+    test_dataset = "my_dataset_test"
+    output_dir = "outputs/results"
     # Evaluate model and get results
     evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
-    # Log evaluation results (for example, using wandb)
+    # Log evaluation results
     wandb.log({"evaluation_results": evaluation_results})
 
     # Step 5: Run inference on the test set
@@ -76,7 +78,7 @@ def main():
     metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
 
     # Debugging to ensure metadata is correct
-    print(f"Main Metadata type: {type(metadata)}")  # Debug line
+    print(f"Main Metadata type: {type(metadata)}")
     run_inference(test_images_dir, output_dir, predictor, metadata)
 
     # Step 6: Export results to a CSV
