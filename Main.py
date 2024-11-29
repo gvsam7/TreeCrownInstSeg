@@ -2,8 +2,8 @@
 Author: Georgios Voulgaris
 Date: 22/11/2024
 Description: This repository uses Detectron2 to train a Mask R-CNN for segmenting individual tree crowns. It serves as a
-             baseline that will enable for further experimentation to explore data fusion techniques for the task of
-             individual tree instance segmentation.
+             testing platform that will enable for further experimentation on various models and explore data fusion
+             techniques for the task of individual tree instance segmentation.
 """
 
 import os
