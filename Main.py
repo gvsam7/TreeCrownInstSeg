@@ -45,7 +45,7 @@ def main():
     # visualise_samples()
 
     # Step 2: Train the model
-    config_file = "Detectron2/config.yaml"
+    config_file = "detectron2/config.yaml"
     train_model(
         device=device,
         output_dir="outputs/results",
