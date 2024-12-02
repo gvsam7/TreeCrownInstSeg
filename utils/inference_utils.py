@@ -16,7 +16,7 @@ def initialise_predictor(config_file):
     cfg.MODEL.DEVICE = "cpu"
 
     # Save the config to a YAML file
-    config_yaml_path = "Detectron2/config.yaml"
+    config_yaml_path = "detectron2/config.yaml"
     with open(config_yaml_path, 'w') as file:
         yaml.dump(cfg, file)
 
