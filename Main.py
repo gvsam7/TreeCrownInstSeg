@@ -40,6 +40,15 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Running on the: {device}")
 
+    # Print the CUDA version PyTorch was compiled with
+    print(f"CUDA Version (PyTorch): {torch.version.cuda}")
+
+    # Check if CUDA is available
+    print(f"CUDA Available: {torch.cuda.is_available()}")
+
+    # Print the number of GPUs available
+    print(f"Number of GPUs available: {torch.cuda.device_count()}")
+
     # Step 1: Setup environment and datasets
     register_datasets()
     # visualise_samples()
