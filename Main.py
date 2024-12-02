@@ -92,7 +92,7 @@ def main():
     # inference_results_dir = os.path.join(output_dir, "inference_results")
     # Create the output directory if it doesn't exist
     # os.makedirs(inference_results_dir, exist_ok=True)
-    inference_images = []
+    """inference_images = []
     for img_file in os.listdir(output_dir):
         if img_file.endswith(('_result.png', '.jpg', '.jpeg')):
             inference_images.append(wandb.Image(
@@ -101,7 +101,17 @@ def main():
             ))
 
     # Log images to wandb
-    wandb.log({"inference_results": inference_images})
+    wandb.log({"inference_results": inference_images})"""
+
+    results_dir = "outputs/results"
+    inference_results = {}
+
+    for img_file in os.listdir(results_dir):
+        if img_file.endswith(('_result.png', '.jpg', '.jpeg', '.png')):
+            image_path = os.path.join(results_dir, img_file)
+            inference_results[img_file] = wandb.Image(image_path)
+
+    wandb.log({"inference_results": inference_results})
 
     # Optional: Log some summary statistics from the CSV
     csv_df = pd.read_csv(output_csv_path)
