@@ -6,6 +6,7 @@ from detectron2.config import get_cfg
 import csv
 import yaml
 from skimage.measure import regionprops, label
+from detectron2.utils.visualizer import ColorMode
 
 
 def initialise_predictor(config_file):
@@ -39,7 +40,7 @@ def run_inference(image_dir, output_dir, predictor, metadata):
         print(f"Metadata type: {type(metadata)}")  # Debug line
 
         # Visualise results
-        v = Visualizer(new_im[:, :, ::-1], metadata=metadata)
+        v = Visualizer(new_im[:, :, ::-1], metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE_BW)
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         output_path = os.path.join(output_dir, f"{os.path.splitext(image_filename)[0]}_result.png")
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
