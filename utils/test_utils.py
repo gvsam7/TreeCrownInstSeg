@@ -31,7 +31,7 @@ def evaluate_model(cfg, predictor, test_dataset, output_dir):
     try:
         # Take first batch and first image
         sample_batch = next(iter(test_loader))
-        sample_image = sample_batch['image'][0]
+        sample_image = sample_batch[0]['image']
 
         # Test prediction on single image
         sample_prediction = predictor(sample_image)
@@ -39,6 +39,9 @@ def evaluate_model(cfg, predictor, test_dataset, output_dir):
         print(f"Sample prediction content: {sample_prediction}")
     except Exception as e:
         print(f"Error in sample prediction: {e}")
+        # Print more diagnostic information
+        print(f"Sample batch keys: {sample_batch[0].keys()}")
+        print(f"Sample batch structure: {sample_batch}")
 
     # Ensure the output directory exists
     os.makedirs(output_dir, exist_ok=True)
