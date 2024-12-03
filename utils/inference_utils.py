@@ -9,12 +9,14 @@ from skimage.measure import regionprops, label
 from detectron2.utils.visualizer import ColorMode
 
 
-def initialise_predictor(config_file):
+def initialise_predictor(config_file, threshold):
     # Initialise the Detectron2 predictor with the given config file.
     cfg = get_cfg()
     cfg.merge_from_file(config_file)
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
     cfg.MODEL.DEVICE = "cpu"
+    # Set the threshold for inference
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold  # Apply threshold for inference
 
     # Save the config to a YAML file
     config_yaml_path = "detectron2/config.yaml"

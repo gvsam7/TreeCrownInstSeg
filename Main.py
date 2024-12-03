@@ -57,11 +57,10 @@ def main():
         max_iter=args.max_iter,  # 1000,
         batch_size=args.batch_size,
         base_lr=args.base_lr,
-        threshold=args.threshold,
     )
 
     # Step 3: Initialise the predictor
-    cfg, predictor = initialise_predictor(config_file)
+    cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
 
     # Step 4: Evaluate the model
     test_dataset = "my_dataset_test"
