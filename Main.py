@@ -26,6 +26,7 @@ from detectron2.utils.visualizer import Visualizer
 import cv2
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
+import detectron2
 
 
 def main():
@@ -49,6 +50,10 @@ def main():
     # Set device
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Running on the: {device}")
+
+    print(torch.__version__)
+    print(torch.version.cuda)
+    print(detectron2.__version__)
 
     # Step 1: Setup environment and datasets
     register_datasets()
