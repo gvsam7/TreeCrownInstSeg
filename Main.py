@@ -98,16 +98,25 @@ def main():
     cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")
     cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     # Set the threshold for inference
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # Apply threshold for inference
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6  # Apply threshold for inference
     cfg.MODEL.MASK_ON = True
     predictor = DefaultPredictor(cfg)
+    print(f"Loading weights from {cfg.MODEL.WEIGHTS}")
 
     for d in test_dataset_dicts:  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
+        
+        print(f"Test metatdata: {test_metadata}")
+
+        if "instances" in outputs and len(outputs["instances"]) > 0:
+            print(f"Predictions found for {d['file_name']}")
+        else:
+            print(f"No predictions for {d['file_name']}")
+
         v = Visualizer(im[:, :, ::-1],
                        metadata=test_metadata,
-                       scale=0.5,
+                       scale=1.0,
                        instance_mode=ColorMode.IMAGE
                        # remove the colors of unsegmented pixels. This option is only available for segmentation models
                        )
