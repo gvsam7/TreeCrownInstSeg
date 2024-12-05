@@ -56,6 +56,9 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         # Create the output directory if it doesn't exist
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
+        print(cfg.MODEL.ROI_HEADS.NUM_CLASSES)  # Should be 11
+        print(cfg.DATASETS.TRAIN)  # Ensure correct dataset used
+
         # Initialise trainer and start training
         trainer = DefaultTrainer(cfg)
         trainer.resume_or_load(resume=False)
