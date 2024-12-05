@@ -96,9 +96,9 @@ def main():
     cfg.DATASETS.TRAIN = ("my_dataset_train",)  # Assign your training dataset here
     cfg.DATASETS.TEST = ("my_dataset_test",)
     cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")
-    cfg.MODEL.DEVICE = "cpu"
+    cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     # Set the threshold for inference
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # Apply threshold for inference
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # Apply threshold for inference
     cfg.MODEL.MASK_ON = True
     predictor = DefaultPredictor(cfg)
 
@@ -108,7 +108,7 @@ def main():
         v = Visualizer(im[:, :, ::-1],
                        metadata=test_metadata,
                        scale=0.5,
-                       instance_mode=ColorMode.IMAGE_BW
+                       instance_mode=ColorMode.IMAGE
                        # remove the colors of unsegmented pixels. This option is only available for segmentation models
                        )
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
