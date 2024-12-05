@@ -106,7 +106,7 @@ def main():
     for d in test_dataset_dicts:  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
-        
+
         print(f"Test metatdata: {test_metadata}")
 
         if "instances" in outputs and len(outputs["instances"]) > 0:

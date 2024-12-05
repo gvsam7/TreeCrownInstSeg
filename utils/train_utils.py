@@ -64,6 +64,8 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
 
         # Run evaluation after training
         print("Starting evaluation on test dataset...")
+        # Set the model to evaluation mode before evaluation
+        trainer.model.eval()
         evaluator = COCOEvaluator(test_dataset, cfg, False, output_dir=os.path.join(cfg.OUTPUT_DIR, "evaluation"))
         val_loader = build_detection_test_loader(cfg, test_dataset)
         evaluation_results = inference_on_dataset(trainer.model, val_loader, evaluator)
