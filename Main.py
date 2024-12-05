@@ -105,7 +105,7 @@ def main():
                        )
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         # cv2_imshow(out.get_image()[:, :, ::-1])
-        output_path = os.path.join("outputs/results", f"{os.path.splitext(d)[0]}_result.png")
+        output_path = os.path.join("outputs/results", f"{d[0]}_result.png")
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
 
     """
