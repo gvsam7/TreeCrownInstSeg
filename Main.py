@@ -81,7 +81,7 @@ def main():
     # predictor = DefaultPredictor(cfg)
 
     cfg.merge_from_file(config_file)
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
+    cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")
     cfg.MODEL.DEVICE = "cpu"
     # Set the threshold for inference
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # Apply threshold for inference
