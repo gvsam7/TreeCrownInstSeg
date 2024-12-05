@@ -68,6 +68,18 @@ def main():
     )
 
     #  Testing colab style
+    # Step 3: Initialise the predictor
+    cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
+    
+    # Step 4: Evaluate the model
+    test_dataset = "my_dataset_test"
+    output_dir = "outputs/results"
+    # Evaluate model and get results
+    evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
+    # Log evaluation results
+    wandb.log({"evaluation_results": evaluation_results})
+
+
     cfg = get_cfg()
     # Save the config to a YAML file
     config_yaml_path = "detectron2/config.yaml"
