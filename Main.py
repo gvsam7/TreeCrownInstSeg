@@ -94,7 +94,7 @@ def main():
     test_metadata = MetadataCatalog.get("my_dataset_test")
     test_dataset_dicts = DatasetCatalog.get("my_dataset_test")
 
-    for d in random.sample(test_dataset_dicts, 13):  # select number of images for display
+    for d in random.sample(test_dataset_dicts, 6):  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
         v = Visualizer(im[:, :, ::-1],
