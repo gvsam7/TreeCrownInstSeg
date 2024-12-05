@@ -80,19 +80,24 @@ def main():
     # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
     # predictor = DefaultPredictor(cfg)
 
+    from detectron2.data.datasets import register_coco_instances
+    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
+    register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json", "Data/train")
+
+    train_metadata = MetadataCatalog.get("my_dataset_train")
+    train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
+    test_metadata = MetadataCatalog.get("my_dataset_test")
+    test_dataset_dicts = DatasetCatalog.get("my_dataset_test")
+
     cfg.merge_from_file(config_file)
+    cfg.DATASETS.TRAIN = ("my_dataset_train",)  # Assign your training dataset here
+    cfg.DATASETS.TEST = ("my_dataset_test",)
     cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")
     cfg.MODEL.DEVICE = "cpu"
     # Set the threshold for inference
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # Apply threshold for inference
     cfg.MODEL.MASK_ON = True
     predictor = DefaultPredictor(cfg)
-
-    from detectron2.data.datasets import register_coco_instances
-    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
-
-    test_metadata = MetadataCatalog.get("my_dataset_test")
-    test_dataset_dicts = DatasetCatalog.get("my_dataset_test")
 
     for d in random.sample(test_dataset_dicts, 6):  # select number of images for display
         im = cv2.imread(d["file_name"])
