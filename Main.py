@@ -94,7 +94,7 @@ def main():
     test_metadata = MetadataCatalog.get("my_dataset_test")
     test_dataset_dicts = DatasetCatalog.get("my_dataset_test")
 
-    for d in random.sample(test_dataset_dicts, 6):  # select number of images for display
+    for d in random.sample(test_dataset_dicts, 13):  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
         v = Visualizer(im[:, :, ::-1],
@@ -105,7 +105,8 @@ def main():
                        )
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         # cv2_imshow(out.get_image()[:, :, ::-1])
-        cv2.imwrite("Data/test", out.get_image()[:, :, ::-1])
+        output_path = os.path.join("outputs/results", f"{os.path.splitext(d)[0]}_result.png")
+        cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
 
     """
     # Step 3: Initialise the predictor
