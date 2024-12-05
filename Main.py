@@ -62,14 +62,6 @@ def main():
     # Step 3: Initialise the predictor
     cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
 
-    # Step 4: Evaluate the model
-    test_dataset = "my_dataset_test"
-    output_dir = "outputs/results"
-    # Evaluate model and get results
-    evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
-    # Log evaluation results
-    wandb.log({"evaluation_results": evaluation_results})
-
     # Step 5: Run inference on the test set
     test_images_dir = "Data/test"
     output_dir = "outputs/results"
@@ -79,6 +71,14 @@ def main():
     # Debugging to ensure metadata is correct
     print(f"Main Metadata type: {type(metadata)}")
     run_inference(test_images_dir, output_dir, predictor, metadata)
+
+    # Step 4: Evaluate the model
+    test_dataset = "my_dataset_test"
+    output_dir = "outputs/results"
+    # Evaluate model and get results
+    evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
+    # Log evaluation results
+    wandb.log({"evaluation_results": evaluation_results})
 
     # Step 6: Export results to a CSV
     output_csv_path = os.path.join(output_dir, "output_objects.csv")
