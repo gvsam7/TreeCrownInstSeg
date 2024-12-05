@@ -70,16 +70,8 @@ def main():
     )
 
     #  Testing colab style
-    # Step 3: Initialise the predictor
-    cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
-
-    # cfg = get_cfg()
-    # Run evaluation after training
-    evaluator = COCOEvaluator("my_dataset_test", cfg, False, output_dir="outputs/results")
-    val_loader = build_detection_test_loader(cfg, "my_dataset_test")
-    evaluation_results = inference_on_dataset(predictor.model, val_loader, evaluator)
-    print("Evaluation results:", evaluation_results)
-
+    cfg = get_cfg()
+    
     # Save the config to a YAML file
     config_yaml_path = "detectron2/config.yaml"
     with open(config_yaml_path, 'w') as file:

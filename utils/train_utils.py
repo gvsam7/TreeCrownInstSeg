@@ -3,6 +3,8 @@ from detectron2.engine import DefaultTrainer
 from detectron2.config import get_cfg
 from detectron2 import model_zoo
 from detectron2.data import DatasetCatalog
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+from detectron2.data import build_detection_test_loader
 
 
 def train_model(device, output_dir, num_classes, train_dataset, test_dataset, num_workers, ims_per_batch, max_iter, batch_size,
@@ -59,6 +61,13 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         trainer.train()
 
         print(f"Training completed. Model and logs saved to {cfg.OUTPUT_DIR}.")
+
+        # Run evaluation after training
+        print("Starting evaluation on test dataset...")
+        evaluator = COCOEvaluator(test_dataset, cfg, False, output_dir=os.path.join(cfg.OUTPUT_DIR, "evaluation"))
+        val_loader = build_detection_test_loader(cfg, test_dataset)
+        evaluation_results = inference_on_dataset(trainer.model, val_loader, evaluator)
+        print("Evaluation results:", evaluation_results)
 
     except Exception as e:
         print(f"Error during training: {e}")
