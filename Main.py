@@ -21,12 +21,8 @@ import yaml
 from detectron2.config import get_cfg
 from detectron2.engine import DefaultPredictor
 from detectron2.utils.visualizer import ColorMode
-import random
 from detectron2.utils.visualizer import Visualizer
 import cv2
-from detectron2.evaluation import COCOEvaluator, inference_on_dataset
-from detectron2.data import build_detection_test_loader
-import detectron2
 
 
 def main():
@@ -50,10 +46,6 @@ def main():
     # Set device
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Running on the: {device}")
-
-    print(torch.__version__)
-    print(torch.version.cuda)
-    print(detectron2.__version__)
 
     # Step 1: Setup environment and datasets
     register_datasets()
@@ -83,7 +75,7 @@ def main():
         yaml.dump(cfg, file)
 
     # Inference should use the config with parameters that are used in training
-    # cfg now already contains everything we've set previously. We changed it a little bit for inference:
+    # cfg now already contains everything set previously. Changed it a little bit for inference:
     # cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
     # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
     # predictor = DefaultPredictor(cfg)
@@ -111,13 +103,6 @@ def main():
     for d in test_dataset_dicts:  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
-
-        print(f"Test metatdata: {test_metadata}")
-
-        if "instances" in outputs and len(outputs["instances"]) > 0:
-            print(f"Predictions found for {d['file_name']}")
-        else:
-            print(f"No predictions for {d['file_name']}")
 
         v = Visualizer(im[:, :, ::-1],
                        metadata=test_metadata,
