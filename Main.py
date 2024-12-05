@@ -71,7 +71,7 @@ def main():
 
     #  Testing colab style
     cfg = get_cfg()
-    
+
     # Save the config to a YAML file
     config_yaml_path = "detectron2/config.yaml"
     with open(config_yaml_path, 'w') as file:
@@ -102,7 +102,7 @@ def main():
     cfg.MODEL.MASK_ON = True
     predictor = DefaultPredictor(cfg)
 
-    for d in random.sample(test_dataset_dicts, 6):  # select number of images for display
+    for d in test_dataset_dicts:  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
         v = Visualizer(im[:, :, ::-1],
