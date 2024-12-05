@@ -76,8 +76,16 @@ def main():
 
     # Inference should use the config with parameters that are used in training
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+    # cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+    # predictor = DefaultPredictor(cfg)
+
+    cfg.merge_from_file(config_file)
+    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
+    cfg.MODEL.DEVICE = "cpu"
+    # Set the threshold for inference
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # Apply threshold for inference
+    cfg.MODEL.MASK_ON = True
     predictor = DefaultPredictor(cfg)
 
     from detectron2.data.datasets import register_coco_instances
