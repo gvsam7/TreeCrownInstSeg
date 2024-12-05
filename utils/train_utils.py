@@ -51,6 +51,8 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = batch_size
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
         cfg.MODEL.MASK_ON = True
+        cfg.INPUT.MIN_SIZE_TEST = 768
+        cfg.INPUT.MAX_SIZE_TEST = 768
 
         # Create the output directory if it doesn't exist
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)

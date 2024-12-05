@@ -116,7 +116,7 @@ def main():
 
         v = Visualizer(im[:, :, ::-1],
                        metadata=test_metadata,
-                       scale=1.0,
+                       scale=0.8,
                        instance_mode=ColorMode.IMAGE
                        # remove the colors of unsegmented pixels. This option is only available for segmentation models
                        )
@@ -127,6 +127,11 @@ def main():
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
 
     """
+    # Run evaluation after training
+    print("Starting evaluation on test dataset...")
+    # Set the model to evaluation mode before evaluation
+    trainer.model.eval()
+    
     # Step 3: Initialise the predictor
     cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
 
