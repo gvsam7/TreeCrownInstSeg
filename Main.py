@@ -40,12 +40,18 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Running on the: {device}")
 
+    # Set directories
+    test_dataset = "my_dataset_test"
+    test_images_dir = "Data/test"
+    output_dir = "outputs/results"
+    config_file = "detectron2/config.yaml"
+
     # Step 1: Setup environment and datasets
     register_datasets()
     # visualise_samples()
 
     # Step 2: Train the model
-    config_file = "detectron2/config.yaml"
+    print("Starting training...")
     train_model(
         device=device,
         output_dir="outputs/results",
@@ -65,17 +71,12 @@ def main():
 
     # Step 4: Evaluate the model
     print("Starting evaluation on test dataset...")
-    test_dataset = "my_dataset_test"
-    output_dir = "outputs/results"
     # Evaluate model and get results
     evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
     # Log evaluation results
     wandb.log({"evaluation_results": evaluation_results})
 
     # Step 5: Run inference on the test set
-    test_images_dir = "Data/test"
-    output_dir = "outputs/results"
-    # metadata = cfg.DATASETS.TRAIN[0]
     metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
 
     # Debugging to ensure metadata is correct
@@ -83,19 +84,18 @@ def main():
     run_inference(test_images_dir, output_dir, predictor, metadata)
 
     # Step 6: Export results to a CSV
+    print("Exporting results to CSV...")
     output_csv_path = os.path.join(output_dir, "output_objects.csv")
     export_results_to_csv(test_images_dir, output_csv_path, predictor, metadata)
 
     # Wandb logging
     # Log the CSV file
     wandb.save(output_csv_path)
-
-    results_dir = "outputs/results"
     inference_results = {}
 
-    for img_file in os.listdir(results_dir):
+    for img_file in os.listdir(output_dir):
         if img_file.endswith(('_result.png', '.jpg', '.jpeg', '.png')):
-            image_path = os.path.join(results_dir, img_file)
+            image_path = os.path.join(output_dir, img_file)
             inference_results[img_file] = wandb.Image(image_path)
 
     wandb.log({"inference_results": inference_results})
