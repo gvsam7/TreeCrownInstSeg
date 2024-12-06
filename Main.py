@@ -13,16 +13,9 @@ from utils.test_utils import evaluate_model
 from utils.inference_utils import initialise_predictor, run_inference, export_results_to_csv
 from utils.hyperparameters import arguments
 import torch
-from detectron2.data import MetadataCatalog, DatasetCatalog #added for test
+from detectron2.data import MetadataCatalog, DatasetCatalog
 import pandas as pd
 import wandb
-
-import yaml
-from detectron2.config import get_cfg
-from detectron2.engine import DefaultPredictor
-from detectron2.utils.visualizer import ColorMode
-from detectron2.utils.visualizer import Visualizer
-import cv2
 
 
 def main():
@@ -65,9 +58,66 @@ def main():
         batch_size=args.batch_size,
         base_lr=args.base_lr,
     )
+    
+    # Step 3: Initialise the predictor
+    print("Initialising predictor...")
+    cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
 
-    """
-    #  Testing colab style
+    # Step 4: Evaluate the model
+    print("Starting evaluation on test dataset...")
+    test_dataset = "my_dataset_test"
+    output_dir = "outputs/results"
+    # Evaluate model and get results
+    evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
+    # Log evaluation results
+    wandb.log({"evaluation_results": evaluation_results})
+
+    # Step 5: Run inference on the test set
+    test_images_dir = "Data/test"
+    output_dir = "outputs/results"
+    # metadata = cfg.DATASETS.TRAIN[0]
+    metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
+
+    # Debugging to ensure metadata is correct
+    print(f"Main Metadata type: {type(metadata)}")
+    run_inference(test_images_dir, output_dir, predictor, metadata)
+
+    # Step 6: Export results to a CSV
+    output_csv_path = os.path.join(output_dir, "output_objects.csv")
+    export_results_to_csv(test_images_dir, output_csv_path, predictor, metadata)
+
+    # Wandb logging
+    # Log the CSV file
+    wandb.save(output_csv_path)
+
+    results_dir = "outputs/results"
+    inference_results = {}
+
+    for img_file in os.listdir(results_dir):
+        if img_file.endswith(('_result.png', '.jpg', '.jpeg', '.png')):
+            image_path = os.path.join(results_dir, img_file)
+            inference_results[img_file] = wandb.Image(image_path)
+
+    wandb.log({"inference_results": inference_results})
+
+    # Optional: Log some summary statistics from the CSV
+    csv_df = pd.read_csv(output_csv_path)
+    wandb.log({
+        "total_detected_objects": len(csv_df),
+        "unique_classes": csv_df['Category_ID'].nunique(),
+        "avg_object_area": csv_df['Area'].mean(),
+        "max_object_area": csv_df['Area'].max(),
+        "min_object_area": csv_df['Area'].min()
+    })
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+"""
+    #  Testing colab style. Now runs perfect
     # Load the saved config from training
     cfg = get_cfg()
     cfg.merge_from_file("detectron2/config.yaml")  # Load training config
@@ -100,88 +150,8 @@ def main():
         output_path = os.path.join("outputs/results", f"{file_name}_result.png")
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
 
-    print("Inference completed. Results saved in 'outputs/results'.")"""
-
-    """
-    # That is what I had for testing. This was reseting the weights nd the model could not predict properly
-    # Date: 06/12/2024
-    cfg = get_cfg()
-
-    # Save the config to a YAML file
-    config_yaml_path = "detectron2/config.yaml"
-    with open(config_yaml_path, 'w') as file:
-        yaml.dump(cfg, file)
-
-    # Inference should use the config with parameters that are used in training
-    # cfg now already contains everything set previously. Changed it a little bit for inference:
-    # cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
-    # predictor = DefaultPredictor(cfg)
-
-    from detectron2.data.datasets import register_coco_instances
-    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
-    register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json", "Data/train")
-
-    train_metadata = MetadataCatalog.get("my_dataset_train")
-    train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
-    test_metadata = MetadataCatalog.get("my_dataset_test")
-    test_dataset_dicts = DatasetCatalog.get("my_dataset_test")
-
-    cfg.merge_from_file(config_file)
-    cfg.DATASETS.TRAIN = ("my_dataset_train",)  # Assign your training dataset here
-    cfg.DATASETS.TEST = ("my_dataset_test",)
-    cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")
-    cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    # Set the threshold for inference
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6  # Apply threshold for inference
-    cfg.MODEL.MASK_ON = True
-    predictor = DefaultPredictor(cfg)
-    print(f"Loading weights from {cfg.MODEL.WEIGHTS}")
-
-    for d in test_dataset_dicts:  # select number of images for display
-        im = cv2.imread(d["file_name"])
-        outputs = predictor(im)
-
-        v = Visualizer(im[:, :, ::-1],
-                       metadata=test_metadata,
-                       scale=0.8,
-                       instance_mode=ColorMode.IMAGE
-                       # remove the colors of unsegmented pixels. This option is only available for segmentation models
-                       )
-        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-        # cv2_imshow(out.get_image()[:, :, ::-1])
-        file_name = os.path.splitext(os.path.basename(d["file_name"]))[0]
-        output_path = os.path.join("outputs/results", f"{file_name}_result.png")
-        cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
-    """
-
-
-    # Run evaluation after training
-    print("Starting evaluation on test dataset...")
-    # Set the model to evaluation mode before evaluation
-    # trainer.model.eval()
+    print("Inference completed. Results saved in 'outputs/results'.")
     
-    # Step 3: Initialise the predictor
-    cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
-
-    # Step 4: Evaluate the model
-    test_dataset = "my_dataset_test"
-    output_dir = "outputs/results"
-    # Evaluate model and get results
-    evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
-    # Log evaluation results
-    wandb.log({"evaluation_results": evaluation_results})
-
-    # Step 5: Run inference on the test set
-    test_images_dir = "Data/test"
-    output_dir = "outputs/results"
-    # metadata = cfg.DATASETS.TRAIN[0]
-    metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
-
-    # Debugging to ensure metadata is correct
-    print(f"Main Metadata type: {type(metadata)}")
-    run_inference(test_images_dir, output_dir, predictor, metadata)
-
     # Step 6: Export results to a CSV
     ########## Test ##################################
     test_images_dir = "Data/test"
@@ -195,20 +165,6 @@ def main():
     # Wandb logging
     # Log the CSV file
     wandb.save(output_csv_path)
-
-    # inference_results_dir = os.path.join(output_dir, "inference_results")
-    # Create the output directory if it doesn't exist
-    # os.makedirs(inference_results_dir, exist_ok=True)
-    """inference_images = []
-    for img_file in os.listdir(output_dir):
-        if img_file.endswith(('_result.png', '.jpg', '.jpeg')):
-            inference_images.append(wandb.Image(
-                os.path.join(output_dir, img_file),
-                caption=f"Inference Result: {img_file}"
-            ))
-
-    # Log images to wandb
-    wandb.log({"inference_results": inference_images})"""
 
     results_dir = "outputs/results"
     inference_results = {}
@@ -229,7 +185,4 @@ def main():
         "max_object_area": csv_df['Area'].max(),
         "min_object_area": csv_df['Area'].min()
     })
-
-
-if __name__ == "__main__":
-    main()
+    """

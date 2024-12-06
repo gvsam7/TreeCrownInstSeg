@@ -19,11 +19,6 @@ def initialise_predictor(config_file, threshold):
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold  # Apply threshold for inference
     cfg.MODEL.MASK_ON = True
 
-    # Save the config to a YAML file
-    # config_yaml_path = "detectron2/config.yaml"
-    # with open(config_yaml_path, 'w') as file:
-     #    yaml.dump(cfg, file)
-
     predictor = DefaultPredictor(cfg)
     return cfg, predictor
 
