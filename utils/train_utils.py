@@ -64,7 +64,8 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         print(f"Training completed. Model and logs saved to {cfg.OUTPUT_DIR}.")
 
         # Save the training configuration
-        cfg_path = os.path.join(cfg.OUTPUT_DIR, "config.yaml")
+        # cfg_path = os.path.join(cfg.OUTPUT_DIR, "config.yaml")
+        cfg_path = "detectron2/config.yaml"
         with open(cfg_path, "w") as f:
             f.write(cfg.dump())  # Save training configuration
 
