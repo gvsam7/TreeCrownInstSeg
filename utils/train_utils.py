@@ -53,6 +53,7 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         cfg.MODEL.MASK_ON = True
         cfg.INPUT.MIN_SIZE_TEST = 768
         cfg.INPUT.MAX_SIZE_TEST = 768
+
         # Create the output directory if it doesn't exist
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
@@ -72,6 +73,8 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         print("Starting evaluation on test dataset...")
         # Set the model to evaluation mode before evaluation
         trainer.model.eval()
+
+        # This part below was used for testing the code (rune Main.py commented section)
         # evaluator = COCOEvaluator(test_dataset, cfg, False, output_dir=os.path.join(cfg.OUTPUT_DIR, "evaluation"))
         # val_loader = build_detection_test_loader(cfg, test_dataset)
         # evaluation_results = inference_on_dataset(trainer.model, val_loader, evaluator)
