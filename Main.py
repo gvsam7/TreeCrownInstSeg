@@ -73,7 +73,7 @@ def main():
     cfg.DATASETS.TRAIN = ("my_dataset_train",)  # Explicitly set train dataset
     cfg.DATASETS.TEST = ("my_dataset_test",)  # Explicitly set test dataset
     cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")  # Use trained weights
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6  # Set inference threshold
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # Set inference threshold
     cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
     # Initialise the predictor
