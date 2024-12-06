@@ -66,6 +66,7 @@ def main():
         base_lr=args.base_lr,
     )
 
+    """
     #  Testing colab style
     # Load the saved config from training
     cfg = get_cfg()
@@ -99,7 +100,7 @@ def main():
         output_path = os.path.join("outputs/results", f"{file_name}_result.png")
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
 
-    print("Inference completed. Results saved in 'outputs/results'.")
+    print("Inference completed. Results saved in 'outputs/results'.")"""
 
     """
     # That is what I had for testing. This was reseting the weights nd the model could not predict properly
@@ -154,11 +155,11 @@ def main():
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
     """
 
-    """
+
     # Run evaluation after training
     print("Starting evaluation on test dataset...")
     # Set the model to evaluation mode before evaluation
-    trainer.model.eval()
+    # trainer.model.eval()
     
     # Step 3: Initialise the predictor
     cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
@@ -179,7 +180,7 @@ def main():
 
     # Debugging to ensure metadata is correct
     print(f"Main Metadata type: {type(metadata)}")
-    run_inference(test_images_dir, output_dir, predictor, metadata)"""
+    run_inference(test_images_dir, output_dir, predictor, metadata)
 
     # Step 6: Export results to a CSV
     ########## Test ##################################
