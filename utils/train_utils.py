@@ -56,17 +56,17 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         # Create the output directory if it doesn't exist
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
-        # Save the training configuration
-        cfg_path = os.path.join(cfg.OUTPUT_DIR, "config.yaml")
-        with open(cfg_path, "w") as f:
-            f.write(cfg.dump())  # Save training configuration
-
         # Initialise trainer and start training
         trainer = DefaultTrainer(cfg)
         trainer.resume_or_load(resume=False)
         trainer.train()
 
         print(f"Training completed. Model and logs saved to {cfg.OUTPUT_DIR}.")
+
+        # Save the training configuration
+        cfg_path = os.path.join(cfg.OUTPUT_DIR, "config.yaml")
+        with open(cfg_path, "w") as f:
+            f.write(cfg.dump())  # Save training configuration
 
         # Run evaluation after training
         print("Starting evaluation on test dataset...")
