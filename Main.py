@@ -67,54 +67,37 @@ def main():
     )
 
     #  Testing colab style
+    # Load the saved config from training
     cfg = get_cfg()
+    cfg.merge_from_file("detectron2/config.yaml")  # Load training config
+    cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")  # Use trained weights
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6  # Set inference threshold
+    cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    # Save the config to a YAML file
-    config_yaml_path = "detectron2/config.yaml"
-    with open(config_yaml_path, 'w') as file:
-        yaml.dump(cfg, file)
+    # Initialise the predictor
+    predictor = DefaultPredictor(cfg)
 
-    # Inference should use the config with parameters that are used in training
-    # cfg now already contains everything set previously. Changed it a little bit for inference:
-    # cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
-    # predictor = DefaultPredictor(cfg)
-
-    from detectron2.data.datasets import register_coco_instances
-    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
-    register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json", "Data/train")
-
-    train_metadata = MetadataCatalog.get("my_dataset_train")
-    train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
+    # Get test dataset and metadata
     test_metadata = MetadataCatalog.get("my_dataset_test")
     test_dataset_dicts = DatasetCatalog.get("my_dataset_test")
 
-    cfg.merge_from_file(config_file)
-    cfg.DATASETS.TRAIN = ("my_dataset_train",)  # Assign your training dataset here
-    cfg.DATASETS.TEST = ("my_dataset_test",)
-    cfg.MODEL.WEIGHTS = os.path.join("outputs/results", "model_final.pth")
-    cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    # Set the threshold for inference
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6  # Apply threshold for inference
-    cfg.MODEL.MASK_ON = True
-    predictor = DefaultPredictor(cfg)
-    print(f"Loading weights from {cfg.MODEL.WEIGHTS}")
-
-    for d in test_dataset_dicts:  # select number of images for display
+    # Visualise and save predictions
+    for d in test_dataset_dicts:
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
 
         v = Visualizer(im[:, :, ::-1],
                        metadata=test_metadata,
                        scale=0.8,
-                       instance_mode=ColorMode.IMAGE
-                       # remove the colors of unsegmented pixels. This option is only available for segmentation models
-                       )
+                       instance_mode=ColorMode.IMAGE)
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-        # cv2_imshow(out.get_image()[:, :, ::-1])
+
+        # Save the visualisation
         file_name = os.path.splitext(os.path.basename(d["file_name"]))[0]
         output_path = os.path.join("outputs/results", f"{file_name}_result.png")
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
+
+    print("Inference completed. Results saved in 'outputs/results'.")
 
     """
     # Run evaluation after training
