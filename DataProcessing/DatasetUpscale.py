@@ -1,3 +1,10 @@
+""""
+Author: Georgios Voulgaris
+Date: 09/12/2024
+Description: This script reprojects and resamples the NDVI.tiff image to match the dimensions and projection of the
+             RGB.tiff file.
+"""
+
 from rasterio.warp import reproject, Resampling
 import rasterio
 

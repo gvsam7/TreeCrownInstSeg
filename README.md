@@ -6,17 +6,16 @@ The aim of this project is to develope computational Deep Learning methods to in
 leveraging Deep Learning, Computer Vision, and Remote Sensing technologies to enhance our understanding of ecosystems and biodiversity.
 
 ## Demo
-![](https://github.com/gvsam7/TreeCrownInstSeg/blob/main/Images/reveal_slider_animation.gif)
+
+<div align="center">
+  <img src="https://github.com/gvsam7/TreeCrownInstSeg/blob/main/Images/reveal_slider_animation.gif" alt="Demo Animation">
+</div>
+
 
 
 ## Google Colab
 - Detectree2 Demo[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1VvQbov0EY7CkzqMnR84QiY-bySSx9_wN#scrollTo=k08FlmFjYil-)
 
 ## Papers
-- [Improved Regularization of Convolutional Neural Networks with Cutout](https://arxiv.org/abs/1708.04552)
-- [Mixup: Beyond Empirical Risk Minimization](https://arxiv.org/abs/1710.09412)
-- [CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features](https://arxiv.org/abs/1905.04899)
-- [Generalizing Pooling Functions in Convolutional Neural Networks: Mixed, Gated, and Tree](https://arxiv.org/abs/1509.08985)
-- [ImageNet-Trained CNNs are Biased Towards Texture; Increasing Shape Bias Improves Accuracy and Robustness](https://arxiv.org/abs/1811.12231)
-- [The Origins and Prevalence of Texture Bias in Convolutional Neural Networks](https://arxiv.org/abs/1911.09071)
-- [Combining Diverse Feature Priors](https://arxiv.org/abs/2110.08220)
+- [A Systematic Review of Intermediate Fusion in Multimodal Deep Learning for Biomedical Applications](https://arxiv.org/abs/2408.02686)
+- [Deep Learning in Remote Sensing Image Fusion Methods, Protocols, Data, and Future Perspectives](https://ieeexplore.ieee.org/abstract/document/10778974?casa_token=WFzAT-cvYMcAAAAA:iN5jrYaDv6DptDYsQWZw_XpaTBTlzOqkcDDkgHCB197VO9jNafZrk6zquioK34b45i7aZsg)
