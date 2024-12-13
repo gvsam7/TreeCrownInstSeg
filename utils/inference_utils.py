@@ -28,20 +28,46 @@ def run_inference(image_dir, output_dir, predictor, metadata):
     os.makedirs(output_dir, exist_ok=True)
     for image_filename in os.listdir(image_dir):
         if not image_filename.lower().endswith(('.PNG', '.jpg', '.jpeg', '.bmp', '.gif')):
+            print(f"Skipping non-image file: {image_filename}")
             continue  # Skip non-image files
 
         image_path = os.path.join(image_dir, image_filename)
+
+        # Debugging: Print the path and check if the image exists
+        print(f"Processing image: {image_path}")
+        if not os.path.exists(image_path):
+            print(f"Warning: {image_path} does not exist!")
+            continue
+
         new_im = cv2.imread(image_path)
+
+        # Check if image is read correctly
+        if new_im is None:
+            print(f"Failed to read image: {image_filename}")
+            continue
+
         outputs = predictor(new_im)
 
         # Debugging to ensure metadata is correct
         print(f"Metadata type: {type(metadata)}")  # Debug line
 
+        # Debugging: Check outputs
+        print(f"Inference completed for {image_filename}, number of instances detected: {len(outputs['instances'])}")
+
         # Visualise results
         v = Visualizer(new_im[:, :, ::-1], metadata=metadata, scale=1.0, instance_mode=ColorMode.IMAGE_BW)
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         output_path = os.path.join(output_dir, f"{os.path.splitext(image_filename)[0]}_result.png")
+
+        # Debugging: Print the output path and check if it's valid
+        print(f"Saving visualized output to: {output_path}")
         cv2.imwrite(output_path, out.get_image()[:, :, ::-1])
+
+        # Check if file is saved successfully
+        if not os.path.exists(output_path):
+            print(f"Error: Failed to save the output image for {image_filename}")
+        else:
+            print(f"Successfully saved visualized output for {image_filename}")
 
     print("Inference completed and visualised results saved.")
 
