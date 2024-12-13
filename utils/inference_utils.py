@@ -27,7 +27,7 @@ def run_inference(image_dir, output_dir, predictor, metadata):
     # Perform inference and save visualised results.
     os.makedirs(output_dir, exist_ok=True)
     for image_filename in os.listdir(image_dir):
-        if not image_filename.lower().endswith(('.PNG', '.jpg', '.jpeg', '.bmp', '.gif')):
+        if not image_filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
             print(f"Skipping non-image file: {image_filename}")
             continue  # Skip non-image files
 
