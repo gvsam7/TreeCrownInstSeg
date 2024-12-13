@@ -30,7 +30,6 @@ def main():
             "num_workers": args.num_workers,
             "ims_per_batch": args.ims_per_batch,
             "max_iter": args.max_iter,
-            "checkpoint_period": args.checkpoint_period,
             "batch_size": args.batch_size,
             "base_lr": args.base_lr,
             "threshold": args.threshold
@@ -62,7 +61,6 @@ def main():
         num_workers=args.num_workers,
         ims_per_batch=args.ims_per_batch,
         max_iter=args.max_iter,  # 1000,
-        checkpoint_period=args.checkpoint_period,
         batch_size=args.batch_size,
         base_lr=args.base_lr,
     )
