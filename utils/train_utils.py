@@ -48,7 +48,7 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         cfg.SOLVER.BASE_LR = base_lr
         cfg.SOLVER.MAX_ITER = max_iter
         cfg.SOLVER.STEPS = []
-        # cfg.SOLVER.CHECKPOINT_PERIOD = checkpoint_period
+        cfg.SOLVER.CHECKPOINT_PERIOD = checkpoint_period
         cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = batch_size
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
         cfg.MODEL.MASK_ON = True
