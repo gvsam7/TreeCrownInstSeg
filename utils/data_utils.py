@@ -9,10 +9,20 @@ from detectron2.engine import DefaultTrainer
 import detectron2.data.transforms as T
 
 
-def register_datasets():
-    register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json", "Data/train")
-    register_coco_instances("my_dataset_val", {}, "Data/val/annotations.json", "Data/val")
-    register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
+def register_datasets(data):
+    if data == "data_rgb":
+        # Register RGB datasets
+        register_coco_instances("my_dataset_train", {}, "Data/train/annotations.json", "Data/train")
+        register_coco_instances("my_dataset_val", {}, "Data/val/annotations.json", "Data/val")
+        register_coco_instances("my_dataset_test", {}, "Data/test/annotations.json", "Data/test")
+    elif data == "data_ndvi":
+        # Register NDVI datasets
+        register_coco_instances("my_dataset_train", {}, "Data_NDVI/train/annotations.json", "Data_NDVI/train")
+        register_coco_instances("my_dataset_test", {}, "Data_NDVI/test/annotations.json", "Data_NDVI/test")
+    else:
+        raise ValueError(f"Unknown dataset type: {data}")
+
+    print(f"Dataset: {data}")
 
 
 def visualise_samples(dataset_name="my_dataset_test"):
@@ -26,6 +36,7 @@ def visualise_samples(dataset_name="my_dataset_test"):
         plt.show()
 
 
+# Data augmentations during training
 class AugmentedTrainer(DefaultTrainer):
     @classmethod
     def build_train_loader(cls, cfg):

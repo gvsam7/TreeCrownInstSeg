@@ -26,6 +26,7 @@ def main():
         project="InstSeg",
         config={
             "device": "cuda" if torch.cuda.is_available() else "cpu",
+            "data": args.data,
             "num_classes": args.num_classes,
             "num_workers": args.num_workers,
             "ims_per_batch": args.ims_per_batch,
@@ -42,12 +43,15 @@ def main():
 
     # Set directories
     test_dataset = "my_dataset_test"
-    test_images_dir = "Data/test"
+    if args.data == "data_rgb":
+        test_images_dir = "Data/test"
+    else:
+        test_images_dir = "Data_NDVI/test"
     output_dir = "outputs/results"
     config_file = "detectron2/config.yaml"
 
     # Step 1: Setup environment and datasets
-    register_datasets()
+    register_datasets(args.data)
     # visualise_samples()
 
     # Step 2: Train the model

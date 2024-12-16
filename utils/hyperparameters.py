@@ -11,6 +11,7 @@ def arguments():
     parser.add_argument("--batch_size", type=int, default=256)
     parser.add_argument("--base_lr", type=float, default=25e-5)
     parser.add_argument("--threshold", type=float, default=0.1)
+    parser.add_argument("--data", default='data_rgb', help='data_rgb, data_ndvi')
 
     return parser.parse_args()
 
