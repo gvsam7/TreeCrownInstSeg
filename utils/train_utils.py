@@ -3,7 +3,7 @@ from detectron2.engine import DefaultTrainer
 from detectron2.config import get_cfg
 from detectron2 import model_zoo
 from detectron2.data import DatasetCatalog
-from data_utils import AugmentedTrainer
+from utils.data_utils import AugmentedTrainer
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 
