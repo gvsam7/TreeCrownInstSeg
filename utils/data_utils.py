@@ -4,7 +4,7 @@ from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.utils.visualizer import Visualizer
 import matplotlib.pyplot as plt
 from detectron2.data.datasets import register_coco_instances
-from detectron2.data import dataset_mapper, build_detection_train_loader
+from detectron2.data import DatasetMapper, build_detection_train_loader
 from detectron2.engine import DefaultTrainer
 import detectron2.data.transforms as T
 
@@ -41,5 +41,5 @@ class AugmentedTrainer(DefaultTrainer):
         ]
 
         # Use the augmented DatasetMapper
-        mapper = dataset_mapper(cfg, is_train=True, augmentations=augmentation)
+        mapper = DatasetMapper(cfg, is_train=True, augmentations=augmentation)
         return build_detection_train_loader(cfg, mapper=mapper)
