@@ -3,6 +3,7 @@ from detectron2.engine import DefaultTrainer
 from detectron2.config import get_cfg
 from detectron2 import model_zoo
 from detectron2.data import DatasetCatalog
+from data_utils import AugmentedTrainer
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 
@@ -58,7 +59,8 @@ def train_model(device, output_dir, num_classes, train_dataset, test_dataset, nu
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
         # Initialise trainer and start training
-        trainer = DefaultTrainer(cfg)
+        # trainer = DefaultTrainer(cfg)
+        trainer = AugmentedTrainer(cfg)
         trainer.resume_or_load(resume=False)
         trainer.train()
 

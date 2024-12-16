@@ -4,6 +4,9 @@ from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.utils.visualizer import Visualizer
 import matplotlib.pyplot as plt
 from detectron2.data.datasets import register_coco_instances
+from detectron2.data import dataset_mapper, build_detection_train_loader
+from detectron2.engine import DefaultTrainer
+import detectron2.data.transforms as T
 
 
 def register_datasets():
@@ -21,3 +24,22 @@ def visualise_samples(dataset_name="my_dataset_test"):
         vis = visualiser.draw_dataset_dict(d)
         plt.imshow(vis.get_image()[:, :, ::-1])
         plt.show()
+
+
+class AugmentedTrainer(DefaultTrainer):
+    @classmethod
+    def build_train_loader(cls, cfg):
+        # Define custom augmentations
+        augmentation = [
+            T.RandomBrightness(0.8, 1.2),  # Adjust brightness
+            T.RandomContrast(0.8, 1.2),    # Adjust contrast
+            T.RandomSaturation(0.8, 1.2),  # Adjust saturation
+            T.RandomFlip(horizontal=True, vertical=False),  # Random horizontal flip
+            T.RandomRotation(angle=[-30, 30], expand=False),  # Random rotation within ±30°
+            T.ResizeShortestEdge(short_edge_length=(640, 1024), max_size=1333),  # Resize
+            T.RandomCrop("relative_range", (0.8, 0.8)),  # Random cropping
+        ]
+
+        # Use the augmented DatasetMapper
+        mapper = dataset_mapper(cfg, is_train=True, augmentations=augmentation)
+        return build_detection_train_loader(cfg, mapper=mapper)
