@@ -6,6 +6,7 @@ from detectron2.utils.visualizer import GenericMask
 from pycocotools import mask as mask_utils
 from detectron2.structures import Instances
 from detectron2.engine import DefaultPredictor
+import numpy as np
 
 
 def evaluate_model(cfg, predictor, test_dataset, output_dir):
@@ -86,7 +87,7 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
 
     # Get predictions
     # outputs = predictor(input_data)
-    image = input_data["image"]  # Extract the image tensor
+    image = input_data["image"].permute(1, 2, 0).cpu().numpy()  # Extract the image tensor
     outputs = predictor(image)  # Pass the image tensor to the predictor
 
     # Filter predictions based on ground truth for this image
