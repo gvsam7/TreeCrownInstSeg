@@ -88,6 +88,8 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     # Get predictions
     # outputs = predictor(input_data)
     image = input_data["image"].permute(1, 2, 0).cpu().numpy()  # Extract the image tensor
+    print(type(input_data["image"]))
+    print(input_data["image"].shape)
     outputs = predictor(image)  # Pass the image tensor to the predictor
 
     # Filter predictions based on ground truth for this image
