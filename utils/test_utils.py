@@ -85,7 +85,9 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
 
     # Get predictions
-    outputs = predictor(input_data)
+    # outputs = predictor(input_data)
+    image = input_data["image"]  # Extract the image tensor
+    outputs = predictor(image)  # Pass the image tensor to the predictor
 
     # Filter predictions based on ground truth for this image
     outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
