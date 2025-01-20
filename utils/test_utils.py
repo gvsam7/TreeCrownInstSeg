@@ -75,20 +75,23 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     filtered_evaluation_results = inference_on_dataset(predictor.model, predictions, evaluator)"""
 
     # The following part is a more computationally efficient way in accordance to COCO standards
+    # Process single image
+    input_data = inputs[0]
+
     # Get image ID for matching ground truth
-    img_id = inputs[0]["image_id"]
+    img_id = input_data["image_id"]
 
     # Get relevant ground truth annotations for this image
     img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
 
     # Get predictions
-    outputs = predictor(inputs)
+    outputs = predictor(input_data)
 
     # Filter predictions based on ground truth for this image
     outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
 
     # Process filtered predictions
-    evaluator.process(inputs, outputs)
+    evaluator.process([input_data], [outputs])
 
     filtered_evaluation_results = evaluator.evaluate()
 
