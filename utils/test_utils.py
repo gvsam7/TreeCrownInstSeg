@@ -77,22 +77,16 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
 
     # The following part is a more computationally efficient way in accordance to COCO standards
     # Process single image
-    input_data = inputs[0]
+    input_data = inputs[0]  # Extract the first image dictionary
 
-    # Get image ID for matching ground truth
+    # Get the image ID for filtering ground truth annotations
     img_id = input_data["image_id"]
-
-    # Get relevant ground truth annotations for this image
     img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
 
-    # Get predictions
-    # outputs = predictor(input_data)
-    image = input_data["image"].permute(1, 2, 0).cpu().numpy()  # Extract the image tensor
-    print(type(input_data["image"]))
-    print(input_data["image"].shape)
-    outputs = predictor(image)  # Pass the image tensor to the predictor
+    # Pass the full input_data dictionary to the predictor
+    outputs = predictor(input_data)
 
-    # Filter predictions based on ground truth for this image
+    # Filter predictions based on ground truth
     outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
 
     # Process filtered predictions
