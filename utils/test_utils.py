@@ -76,7 +76,7 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
 
     # The following part is a more computationally efficient way in accordance to COCO standards
     # Get image ID for matching ground truth
-    img_id = inputs[0]["image_id"].item()
+    img_id = inputs[0]["image_id"]
 
     # Get relevant ground truth annotations for this image
     img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
