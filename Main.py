@@ -9,12 +9,13 @@ Description: This repository uses Detectron2 to train a Mask R-CNN for segmentin
 import os
 from utils.data_utils import register_datasets, visualise_samples
 from utils.train_utils import train_model
-from utils.test_utils import evaluate_model
+from utils.test_utils import evaluate_model, filtered_evaluate_model
 from utils.inference_utils import initialise_predictor, run_inference, export_results_to_csv
 from utils.hyperparameters import arguments
 import torch
 from detectron2.data import MetadataCatalog, DatasetCatalog
 import pandas as pd
+import json
 import wandb
 
 
@@ -73,7 +74,28 @@ def main():
     print("Initialising predictor...")
     cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
 
-    # Step 4: Evaluate the model
+    # Step 4a: Evaluate the model in labelled predictions
+    print(f"Starting filtered evaluation on test dataset...")
+
+    # Load ground truth annotations (COCO format)
+    ground_truth_path = "Data/test/annotations.json"
+    with open(ground_truth_path, 'r') as f:
+        ground_truth = json.load(f)
+
+    # Evaluate the model
+    filtered_evaluation_results = filtered_evaluate_model(
+        cfg=cfg,
+        predictor=predictor,
+        test_dataset=test_dataset,
+        output_dir=output_dir,
+        ground_truth_annotations=ground_truth["annotations"],  # Pass ground truth
+        iou_threshold=args.threshold
+    )
+
+    # Log filtered evaluation results
+    wandb.log({"filtered_evaluation_results": filtered_evaluation_results})
+
+    # Step 4b: Evaluate the model
     print("Starting evaluation on test dataset...")
     # Evaluate model and get results
     evaluation_results = evaluate_model(cfg, predictor, test_dataset, output_dir)
