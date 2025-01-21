@@ -7,6 +7,7 @@ from pycocotools import mask as mask_utils
 from detectron2.structures import Instances
 from detectron2.engine import DefaultPredictor
 import numpy as np
+import cv2
 
 
 def evaluate_model(cfg, predictor, test_dataset, output_dir):
@@ -83,8 +84,12 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     img_id = input_data["image_id"]
     img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
 
+    # Load the original image using its file path
+    original_image = cv2.imread(input_data["file_name"])
+    original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+
     # Pass the full input_data dictionary to the predictor
-    outputs = predictor(input_data["image"])
+    outputs = predictor(original_image)
 
     # Filter predictions based on ground truth
     outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
