@@ -130,9 +130,13 @@ def filter_predictions(instances, ground_truth_annotations, iou_threshold=0.5):
     pred_masks = instances.pred_masks.cpu().numpy()
     valid_indices = []
 
+    # Extract image dimensions from the input
+    image_height = instances.image_size[0]
+    image_width = instances.image_size[1]
+
     # Convert ground truth to masks
     gt_masks = [
-        GenericMask(gt["segmentation"], gt["height"], gt["width"]).mask
+        GenericMask(gt["segmentation"], image_height, image_width).mask
         for gt in ground_truth_annotations
     ]
 
