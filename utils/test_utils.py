@@ -84,7 +84,7 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
 
     # Pass the full input_data dictionary to the predictor
-    outputs = predictor(input_data)
+    outputs = predictor(input_data["image"])
 
     # Filter predictions based on ground truth
     outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
