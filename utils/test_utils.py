@@ -154,13 +154,16 @@ def filter_predictions(instances, ground_truth_annotations, iou_threshold=0.5):
         for gt in ground_truth_annotations
     ]
 
+    # Create an `iscrowd` list with the same length as `gt_rle_masks`
+    iscrowd = [0] * len(gt_rle_masks)  # All ground truth annotations are not "crowd"
+
     # Check each prediction against ground truth
     for idx, pred_mask in enumerate(pred_masks):
         # Convert prediction mask to RLE
         pred_rle = binary_mask_to_rle(pred_mask)
 
         # Compute IoUs between this prediction and all ground truth masks
-        ious = mask_utils.iou([pred_rle], gt_rle_masks, [False])[0]
+        ious = mask_utils.iou([pred_rle], gt_rle_masks, iscrowd)[0]
 
         # Check if the IoU with any ground truth exceeds the threshold
         if any(iou >= iou_threshold for iou in ious):
