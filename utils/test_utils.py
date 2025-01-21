@@ -111,6 +111,20 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     return filtered_evaluation_results
 
 
+def binary_mask_to_rle(mask):
+    """
+    Convert a binary mask to RLE format compatible with pycocotools.
+
+    Args:
+        mask (np.ndarray): Binary mask (height x width).
+
+    Returns:
+        dict: RLE-encoded mask.
+    """
+    rle = mask_utils.encode(np.asfortranarray(mask.astype(np.uint8)))
+    return rle
+
+
 # Retain only the predictions that overlap sufficiently (based on the IoU threshold) with at least 1 labelled tree crown.
 def filter_predictions(instances, ground_truth_annotations, iou_threshold=0.5):
     """
@@ -134,18 +148,21 @@ def filter_predictions(instances, ground_truth_annotations, iou_threshold=0.5):
     image_height = instances.image_size[0]
     image_width = instances.image_size[1]
 
-    # Convert ground truth to masks
-    gt_masks = [
-        GenericMask(gt["segmentation"], image_height, image_width).mask
+    # Convert ground truth to RLE masks
+    gt_rle_masks = [
+        binary_mask_to_rle(GenericMask(gt["segmentation"], image_height, image_width).mask)
         for gt in ground_truth_annotations
     ]
 
     # Check each prediction against ground truth
     for idx, pred_mask in enumerate(pred_masks):
-        ious = [
-            mask_utils.iou([pred_mask.astype(np.uint8)], [gt.astype(np.uint8)], [False])[0]
-            for gt in gt_masks
-        ]
+        # Convert prediction mask to RLE
+        pred_rle = binary_mask_to_rle(pred_mask)
+
+        # Compute IoUs between this prediction and all ground truth masks
+        ious = mask_utils.iou([pred_rle], gt_rle_masks, [False])[0]
+
+        # Check if the IoU with any ground truth exceeds the threshold
         if any(iou >= iou_threshold for iou in ious):
             valid_indices.append(idx)
 
