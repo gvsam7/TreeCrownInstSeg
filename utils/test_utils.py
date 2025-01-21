@@ -46,7 +46,7 @@ def evaluate_model(cfg, predictor, test_dataset, output_dir):
     return evaluation_results
 
 
-def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold=0.5):
+def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
     """
     Evaluate the model using COCO metrics after filtering predictions.
 
@@ -126,7 +126,7 @@ def binary_mask_to_rle(mask):
 
 
 # Retain only the predictions that overlap sufficiently (based on the IoU threshold) with at least 1 labelled tree crown.
-def filter_predictions(instances, ground_truth_annotations, iou_threshold=0.5):
+def filter_predictions(instances, ground_truth_annotations, iou_threshold):
     """
     Filter predictions based on IoU with ground truth.
 
