@@ -139,7 +139,10 @@ def filter_predictions(instances, ground_truth_annotations, iou_threshold):
         Instances: Filtered instances object containing valid predictions.
     """
     if len(instances) == 0:
+        print("No predictions available to filter.")
         return instances
+
+    print(f"Number of predictions: {len(instances)}")
 
     pred_masks = instances.pred_masks.cpu().numpy()
     valid_indices = []
@@ -161,13 +164,18 @@ def filter_predictions(instances, ground_truth_annotations, iou_threshold):
     for idx, pred_mask in enumerate(pred_masks):
         # Convert prediction mask to RLE
         pred_rle = binary_mask_to_rle(pred_mask)
+        print(f"Prediction {idx}: Mask shape {pred_mask.shape}")  # Debugging
 
         # Compute IoUs between this prediction and all ground truth masks
         ious = mask_utils.iou([pred_rle], gt_rle_masks, iscrowd)[0]
+        print(f"Prediction {idx}: IoUs with ground truth = {ious}")  # Debugging
 
         # Check if the IoU with any ground truth exceeds the threshold
         if any(iou >= iou_threshold for iou in ious):
+            print(f"Prediction {idx} passes IoU threshold with value: {max(ious)}")  # Debugging
             valid_indices.append(idx)
+        else:
+            print(f"Prediction {idx} does not meet IoU threshold.")  # Debugging
 
     # Create new filtered instances
     return Instances(
