@@ -199,7 +199,12 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     outputs = predictor(original_image)
 
     # Filter predictions based on ground truth
-    outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
+    # outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
+    # Ensure outputs contain predictions before filtering
+    if "instances" in outputs and len(outputs["instances"]) > 0:
+        outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
+    else:
+        print("Warning: No predictions found in outputs!")
 
     # Process filtered predictions
     evaluator.process([input_data], [outputs])
