@@ -10,6 +10,50 @@ import numpy as np
 import cv2
 
 
+class COCOEvaluatorModified:
+    def __init__(self, test_dataset):
+        self.test_dataset = test_dataset
+        print(f"Evaluating the model on the dataset: {test_dataset}")
+
+    def overlaps_with_annotations(self, pred_bbox, gt_bboxes):
+        # Check if predicted bbox overlaps with any ground truth bbox
+        for gt_bbox in gt_bboxes:
+            # Intersection-over-Union (IoU) for bbox overlap
+            ixmin = max(pred_bbox[0], gt_bbox[0])
+            iymin = max(pred_bbox[1], gt_bbox[1])
+            ixmax = min(pred_bbox[2], gt_bbox[2])
+            iymax = min(pred_bbox[3], gt_bbox[3])
+
+            iw = max(0, ixmax - ixmin)
+            ih = max(0, iymax - iymin)
+            intersection = iw * ih
+
+            area_pred = (pred_bbox[2] - pred_bbox[0]) * (pred_bbox[3] - pred_bbox[1])
+            area_gt = (gt_bbox[2] - gt_bbox[0]) * (gt_bbox[3] - gt_bbox[1])
+
+            union = area_pred + area_gt - intersection
+            iou = intersection / union if union != 0 else 0
+
+            # Assuming a threshold for overlap, for instance, 0.5
+            if iou >= 0.5:
+                return True
+        return False
+
+    def evaluate_predictions(self, predictions):
+        filtered_predictions = []
+
+        for prediction in predictions:
+            pred_bbox = prediction["bbox"]  # Assuming bbox is a [xmin, ymin, xmax, ymax] list
+            # Ground truth bboxes in coco_data
+            gt_bboxes = [entry["bbox"] for entry in self.coco_data["annotations"]]
+
+            # Check overlap with ground truth
+            if self.overlaps_with_annotations(pred_bbox, gt_bboxes):
+                filtered_predictions.append(prediction)
+
+        return filtered_predictions
+
+
 class FixedCOCOEvaluator(COCOEvaluator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,7 +90,38 @@ def evaluate_model(cfg, predictor, test_dataset, output_dir):
     return evaluation_results
 
 
-def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
+def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir):
+    """
+    Evaluate the model using COCO metrics.
+
+    Args:
+        cfg: Detectron2 configuration object
+        predictor: Detectron2 predictor object.
+        test_dataset (str): Name of the registered test dataset.
+        output_dir (str): Directory to save evaluation outputs
+
+    Returns:
+        dict: Evaluation results.
+    """
+
+    print(f"Evaluating the model on the dataset: {test_dataset}")
+
+    # Ensure the output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Initialise the COCO evaluator (use the modified version)
+    evaluator = COCOEvaluatorModified(test_dataset)  # Using my modified evaluator class
+    test_loader = build_detection_test_loader(cfg, test_dataset)
+
+    # Run Evaluation - I might need to modify this part to accommodate the new evaluator
+    # Since my evaluator has custom logic, it might need adjustments in how predictions are handled
+    filtered_evaluation_results = inference_on_dataset(predictor.model, test_loader, evaluator)
+
+    print(f"Evaluation complete. Results: {filtered_evaluation_results}")
+    return filtered_evaluation_results
+
+
+def filtered_evaluate_model2(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
     """
     Evaluate the model using COCO metrics after filtering predictions.
 
