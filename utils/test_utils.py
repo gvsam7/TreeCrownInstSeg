@@ -173,7 +173,7 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     test_loader = build_detection_test_loader(cfg, test_dataset)
 
     # Run inference on test data and filter predictions
-    print("Running inference and filtering predictions...")
+    print("Running inference and OLD filtering predictions...")
     # predictions = []
     for inputs in test_loader:
         """outputs = predictor(inputs)  # Model predictions

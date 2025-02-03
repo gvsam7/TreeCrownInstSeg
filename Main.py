@@ -82,13 +82,14 @@ def main():
     with open(ground_truth_path, 'r') as f:
         ground_truth = json.load(f)
 
-    # Evaluate the model
+    ground_truth_annotations = ground_truth.get("annotations", [])  # ✅ Ensures safety
+
     filtered_evaluation_results = filtered_evaluate_model(
         cfg=cfg,
         predictor=predictor,
         test_dataset=test_dataset,
         output_dir=output_dir,
-        ground_truth_annotations=ground_truth["annotations"],  # Pass ground truth
+        ground_truth_annotations=ground_truth_annotations,  # ✅ Now safe
         iou_threshold=args.threshold
     )
 
