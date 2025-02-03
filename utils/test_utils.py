@@ -115,7 +115,7 @@ def evaluate_model(cfg, predictor, test_dataset, output_dir):
     return evaluation_results
 
 
-def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
+def filtered_evaluate_model2(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
     """
     Evaluate the model using COCO metrics.
 
@@ -129,7 +129,7 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
         dict: Evaluation results.
     """
 
-    print(f"Evaluating the model on the dataset: {test_dataset}")
+    print(f"Evaluating the model on the filtered dataset: {test_dataset}")
 
     # Ensure the output directory exists
     os.makedirs(output_dir, exist_ok=True)
@@ -146,7 +146,7 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     return filtered_evaluation_results
 
 
-def filtered_evaluate_model2(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
+def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
     """
     Evaluate the model using COCO metrics after filtering predictions.
 
