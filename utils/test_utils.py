@@ -90,7 +90,7 @@ def evaluate_model(cfg, predictor, test_dataset, output_dir):
     return evaluation_results
 
 
-def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir):
+def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_truth_annotations, iou_threshold):
     """
     Evaluate the model using COCO metrics.
 
