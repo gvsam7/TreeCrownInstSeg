@@ -13,7 +13,12 @@ import cv2
 class COCOEvaluatorModified:
     def __init__(self, test_dataset):
         self.test_dataset = test_dataset
+        self.filtered_predictions = []  # stored filtered predictions
         print(f"Evaluating the model on the dataset: {test_dataset}")
+
+    def reset(self):
+        # Reset stored predictions at the beginning of evaluation
+        self.filtered_predictions = []
 
     def overlaps_with_annotations(self, pred_bbox, gt_bboxes):
         # Check if predicted bbox overlaps with any ground truth bbox
@@ -38,6 +43,26 @@ class COCOEvaluatorModified:
             if iou >= 0.5:
                 return True
         return False
+
+    def process(self, inputs, outputs):
+        """Filter predictions that do not overlap with ground truth."""
+        for input, output in zip(inputs, outputs):
+            gt_bboxes = [ann["bbox"] for ann in input.get("annotations", [])]
+            valid_predictions = []
+
+            if "instances" in output:
+                pred_boxes = output["instances"].pred_boxes.tensor.cpu().numpy()
+                for i, pred_bbox in enumerate(pred_boxes):
+                    if self.overlaps_with_annotations(pred_bbox, gt_bboxes):
+                        valid_predictions.append(output["instances"][i])
+
+                output["instances"] = output["instances"][valid_predictions]
+
+            self.filtered_predictions.append(output)
+
+    def evaluate(self):
+        """Return filtered predictions for evaluation."""
+        return self.filtered_predictions
 
     def evaluate_predictions(self, predictions):
         filtered_predictions = []
