@@ -183,31 +183,31 @@ def filtered_evaluate_model(cfg, predictor, test_dataset, output_dir, ground_tru
     # Evaluate filtered predictions
     filtered_evaluation_results = inference_on_dataset(predictor.model, predictions, evaluator)"""
 
-    # The following part is a more computationally efficient way in accordance to COCO standards
-    # Process single image
-    input_data = inputs[0]  # Extract the first image dictionary
+        # The following part is a more computationally efficient way in accordance to COCO standards
+        # Process single image
+        input_data = inputs[0]  # Extract the first image dictionary
 
-    # Get the image ID for filtering ground truth annotations
-    img_id = input_data["image_id"]
-    img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
+        # Get the image ID for filtering ground truth annotations
+        img_id = input_data["image_id"]
+        img_gt_anns = [ann for ann in ground_truth_annotations if ann["image_id"] == img_id]
 
-    # Load the original image using its file path
-    original_image = cv2.imread(input_data["file_name"])
-    original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+        # Load the original image using its file path
+        original_image = cv2.imread(input_data["file_name"])
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
 
-    # Pass the full input_data dictionary to the predictor
-    outputs = predictor(original_image)
+        # Pass the full input_data dictionary to the predictor
+        outputs = predictor(original_image)
 
-    # Filter predictions based on ground truth
-    # outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
-    # Ensure outputs contain predictions before filtering
-    if "instances" in outputs and len(outputs["instances"]) > 0:
-        outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
-    else:
-        print("Warning: No predictions found in outputs!")
+        # Filter predictions based on ground truth
+        # outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
+        # Ensure outputs contain predictions before filtering
+        if "instances" in outputs and len(outputs["instances"]) > 0:
+            outputs["instances"] = filter_predictions(outputs["instances"], img_gt_anns, iou_threshold)
+        else:
+            print("Warning: No predictions found in outputs!")
 
-    # Process filtered predictions
-    evaluator.process([input_data], [outputs])
+        # Process filtered predictions
+        evaluator.process([input_data], [outputs])
 
     filtered_evaluation_results = evaluator.evaluate()
 
