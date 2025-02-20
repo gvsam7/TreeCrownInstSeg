@@ -74,6 +74,7 @@ def main():
     print("Initialising predictor...")
     cfg, predictor = initialise_predictor(config_file, threshold=args.threshold)
 
+    """
     # Step 4a: Evaluate the model in labelled predictions
     print(f"Starting filtered evaluation on test dataset...")
 
@@ -94,7 +95,7 @@ def main():
     )
 
     # Log filtered evaluation results
-    wandb.log({"filtered_evaluation_results": filtered_evaluation_results})
+    wandb.log({"filtered_evaluation_results": filtered_evaluation_results})"""
 
     # Step 4b: Evaluate the model
     print("Starting evaluation on test dataset...")

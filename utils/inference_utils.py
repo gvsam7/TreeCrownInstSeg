@@ -170,6 +170,7 @@ def export_results_to_csv(image_dir, output_csv_path, predictor, metadata):
 
 
 """
+# This function does not save semantic segmentation coordinates, but 2 points instead, which is not useful
 def export_results_to_csv(image_dir, output_csv_path, predictor, metadata):
     # Extract object-level information and save to a CSV file.
     with open(output_csv_path, 'w', newline='') as csvfile:
